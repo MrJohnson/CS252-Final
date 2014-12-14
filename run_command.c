@@ -35,7 +35,6 @@ runCommand( char * command, char * outputBuffer, int maxBufferSize)
 		while(read(fdpipe[0], outputBuffer, maxBufferSize) != 0){}
 		return 0;
 	}
-
 }
 
 int 
