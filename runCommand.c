@@ -1,12 +1,42 @@
+#include <stdio.h>
+
 int 
 runCommand( char * command, char * outputBuffer, int maxBufferSize) 
 { 
-	char** args
-    
-	int ret = fork();
+	char* argv[2];
+	pid_t pid;
 	int buf_file = fmemopen((void*) outputBuffer, 0666);
+	int fdpipe[2];
+
+	if(buf_file < 0){
+		// error setting up buf_file
+		perror("fmemopen");
+		return -1;
+	}
 
 
+
+	// fork for child process
+	pid = fork();
+	if (pid == 0){
+		// in child process
+		pipe(fdpipe);
+		fdpipe[0] = buf_file;
+		fdpipe[1] = 1;
+		argv[0] = command;			// set up argv
+		argv[1] = NULL;
+		execvp(argv[0], argv); 		// execute command
+		perror("execvp");			// there was an error
+		return -1;
+	} else if (ret < 0) {
+		// there was an error in fork
+		perror("fork");
+		return -1;
+	} else {
+		// parent process
+		waitpid(pid, NULL);
+		return 0;
+	}
 
 }
 
