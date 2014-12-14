@@ -22,7 +22,7 @@ runCommand( char * command, char * outputBuffer, int maxBufferSize)
 		dup2(fdpipe[1], 2);		// set stderr to pipe
 
 		execvp(argv[0], argv);		// execute command
-		perror("execvp");			// there was an error
+		perror("execvp");		// there was an error
 		return -1;
 	} else if (pid < 0) {
 		// there was an error in fork
