@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
+#include <sys/wait.h>
 
 int 
 runCommand( char * command, char * outputBuffer, int maxBufferSize) 
@@ -30,7 +32,7 @@ runCommand( char * command, char * outputBuffer, int maxBufferSize)
 		return -1;
 	} else {
 		// parent process
-		waitpid(pid, NULL);
+		waitpid(pid, NULL, 0);
 		close(fdpipe[1]);  // close the write end of the pipe in the parent
 		while(read(fdpipe[0], outputBuffer, maxBufferSize) != 0){}
 		return 0;
