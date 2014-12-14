@@ -5,21 +5,21 @@ int
 runCommand( char * command, char * outputBuffer, int maxBufferSize) 
 {
 	int i =0;
-  char* argv[2];
+	char* argv[2];
 	int pid;
 	int fdpipe[2];
-  pipe(fdpipe);
+	pipe(fdpipe);
 
 	// fork for child process
 	pid = fork();
 	if (pid == 0){
 		// in child process
-    argv[0] = command;        // set up argv
-    argv[1] = NULL;
-    close(fdpipe[0]);
+		argv[0] = command;        // set up argv
+		argv[1] = NULL;
+		close(fdpipe[0]);
 
-    dup2(fdpipe[1], 1);       // send stdout to pipe
-    dup2(fdpipe[1], 2);       // set stderr to pipe
+		dup2(fdpipe[1], 1);       // send stdout to pipe
+		dup2(fdpipe[1], 2);       // set stderr to pipe
 
 		execvp(argv[0], argv); 		// execute command
 		perror("execvp");			// there was an error
@@ -29,18 +29,14 @@ runCommand( char * command, char * outputBuffer, int maxBufferSize)
 		perror("fork");
 		return -1;
 	} else {
-		  // parent process
-		  waitpid(pid, NULL);
-      close(fdpipe[1]);  // close the write end of the pipe in the parent
-      while(read(fdpipe[0], outputBuffer, maxBufferSize) != 0){
-    }
-
+		// parent process
+		waitpid(pid, NULL);
+		close(fdpipe[1]);  // close the write end of the pipe in the parent
+		while(read(fdpipe[0], outputBuffer, maxBufferSize) != 0){}
 		return 0;
 	}
 
 }
-
-
 
 int 
 main() 
