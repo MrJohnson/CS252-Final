@@ -1,20 +1,17 @@
 int 
 runCommand( char * command, char * outputBuffer, int maxBufferSize) 
 { 
+	char** args
     
-
-
-
-
-
-
-
-
-
+	int ret = fork();
+	int buf_file = fmemopen((void*) outputBuffer, 0666);
 
 
 
 }
+
+
+
 int 
 main() 
 { 
