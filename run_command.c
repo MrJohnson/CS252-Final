@@ -14,15 +14,15 @@ runCommand( char * command, char * outputBuffer, int maxBufferSize)
 	pid = fork();
 	if (pid == 0){
 		// in child process
-		argv[0] = command;        // set up argv
+		argv[0] = command;				// set up argv
 		argv[1] = NULL;
 		close(fdpipe[0]);
 
-		dup2(fdpipe[1], 1);       // send stdout to pipe
-		dup2(fdpipe[1], 2);       // set stderr to pipe
+		dup2(fdpipe[1], 1);				// send stdout to pipe
+		dup2(fdpipe[1], 2);				// set stderr to pipe
 
-		execvp(argv[0], argv); 		// execute command
-		perror("execvp");			// there was an error
+		execvp(argv[0], argv);		// execute command
+		perror("execvp");					// there was an error
 		return -1;
 	} else if (pid < 0) {
 		// there was an error in fork
