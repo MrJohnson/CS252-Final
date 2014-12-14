@@ -1,40 +1,40 @@
-#include <stdio.h>git 
+#include <stdio.h>
+#include <stdlib.h>
 
 int 
 runCommand( char * command, char * outputBuffer, int maxBufferSize) 
 { 
-	char* argv[2];
+	int i =0;
+  char* argv[2];
 	int pid;
-	int buf_file = fmemopen((void*) outputBuffer, 0666);
 	int fdpipe[2];
-
-	if(buf_file < 0){
-		// error setting up buf_file
-		perror("fmemopen");
-		return -1;
-	}
-
-
+  pipe(fdpipe);
 
 	// fork for child process
 	pid = fork();
 	if (pid == 0){
 		// in child process
-		pipe(fdpipe);
-		fdpipe[0] = buf_file;
-		fdpipe[1] = 1;
-		argv[0] = command;			// set up argv
-		argv[1] = NULL;
+    argv[0] = command;        // set up argv
+    argv[1] = NULL;
+    close(fdpipe[0]);
+
+    dup2(fdpipe[1], 1);       // send stdout to pipe
+    dup2(fdpipe[1], 2);       // set stderr to pipe
+
 		execvp(argv[0], argv); 		// execute command
 		perror("execvp");			// there was an error
 		return -1;
-	} else if (ret < 0) {
+	} else if (pid < 0) {
 		// there was an error in fork
 		perror("fork");
 		return -1;
 	} else {
-		// parent process
-		waitpid(pid, NULL);
+		  // parent process
+		  waitpid(pid, NULL);
+      close(fdpipe[1]);  // close the write end of the pipe in the parent
+      while(read(fdpipe[0], outputBuffer, maxBufferSize) != 0){
+    }
+
 		return 0;
 	}
 
@@ -50,11 +50,11 @@ main()
 
           if ( runCommand( "ls", buffer, 1024 ) < 0 ) { 
        perror("runCommand" ); 
-       exit( -1 ); 
+       exit(-1); 
     }
 
     printf( "ls: %s\n", buffer );
 
-    exit( 0 ); 
+    exit( 0); 
 }
 
