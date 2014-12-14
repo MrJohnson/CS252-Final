@@ -1,10 +1,10 @@
-#include <stdio.h>
+#include <stdio.h>git 
 
 int 
 runCommand( char * command, char * outputBuffer, int maxBufferSize) 
 { 
 	char* argv[2];
-	pid_t pid;
+	int pid;
 	int buf_file = fmemopen((void*) outputBuffer, 0666);
 	int fdpipe[2];
 
